@@ -23,7 +23,7 @@ def easteregg_combo(client, conv_id, easteregg, eggcount=1, period=0.5):
 @command.register(admin=True)
 def easteregg(bot, event, easteregg, eggcount=1, period=0.5, conv_name='', *args):
     """Annoy people with easter egg combo in current (or specified) conversation!
-       Usage: /bot easteregg easter_egg_type [count] [period] [conv_name]
+       Usage: easteregg easter_egg_type [count] [period] [conv_name]
        Supported easter eggs: ponies, pitchforks, bikeshed, shydino"""
     conv_name = strip_quotes(conv_name)
     convs = [event.conv] if not conv_name or conv_name == '.' else bot.find_conversations(conv_name)
@@ -36,7 +36,7 @@ def easteregg(bot, event, easteregg, eggcount=1, period=0.5, conv_name='', *args
 @command.register
 def spoof(bot, event, *args):
     """Spoof IngressBot on specified GPS coordinates
-       Usage: /bot spoof latitude,longitude [hack|fire|deploy|mod] [level] [count]"""
+       Usage: spoof latitude,longitude [hack|fire|deploy|mod] [level] [count]"""
     link = 'https://plus.google.com/u/0/{}/about'.format(event.user.id_.chat_id)
     text = _(
         '**!!! WARNING !!!**\n'

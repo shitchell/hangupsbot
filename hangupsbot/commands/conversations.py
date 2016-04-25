@@ -23,7 +23,7 @@ def get_unique_user_objects(bot, user_list):
 @command.register(admin=True)
 def conv_refresh(bot, event, conv_name, *args):
     """Create new conversation with same users as in old one except kicked users (use . for current conversation)
-       Usage: /bot conv_refresh conversation_name [kicked_user_name_1] [kicked_user_name_2] [...]"""
+       Usage: conv_refresh conversation_name [kicked_user_name_1] [kicked_user_name_2] [...]"""
     conv_name = strip_quotes(conv_name)
     convs = [event.conv] if conv_name == '.' else bot.find_conversations(conv_name)
     kicked_chat_ids = get_unique_users(bot, args)
@@ -68,7 +68,7 @@ def conv_refresh(bot, event, conv_name, *args):
 @command.register(admin=True)
 def conv_create(bot, event, conv_name, *args):
     """Create new conversation and invite users to it
-       Usage: /bot conv_create conversation_name [user_name_1] [user_name_2] [...]"""
+       Usage: conv_create conversation_name [user_name_1] [user_name_2] [...]"""
     conv_name = strip_quotes(conv_name)
     unique_user_objects = get_unique_user_objects(bot, args)
     if not unique_user_objects:
@@ -94,7 +94,7 @@ def conv_create(bot, event, conv_name, *args):
 @command.register(admin=True)
 def conv_add(bot, event, conv_name, *args):
     """Invite users to existing conversation (use . for current conversation)
-       Usage: /bot conv_add conversation_name [user_name_1] [user_name_2] [...]"""
+       Usage: conv_add conversation_name [user_name_1] [user_name_2] [...]"""
     conv_name = strip_quotes(conv_name)
     unique_user_objects = get_unique_user_objects(bot, args)
     if not unique_user_objects:
@@ -118,7 +118,7 @@ def conv_add(bot, event, conv_name, *args):
 @command.register(admin=True)
 def conv_rename(bot, event, conv_name, *args):
     """Rename conversation (use . for current conversation)
-       Usage: /bot conv_rename conversation_name new_conversation_name"""
+       Usage: conv_rename conversation_name new_conversation_name"""
     conv_name = strip_quotes(conv_name)
     new_conv_name = strip_quotes(' '.join(args))
 
@@ -130,7 +130,7 @@ def conv_rename(bot, event, conv_name, *args):
 @command.register(admin=True)
 def conv_send(bot, event, conv_name, *args):
     """Send message to conversation as bot (use . for current conversation)
-       Usage: /bot conv_send conversation_name text"""
+       Usage: conv_send conversation_name text"""
     conv_name = strip_quotes(conv_name)
 
     convs = [event.conv] if conv_name == '.' else bot.find_conversations(conv_name)
@@ -141,7 +141,7 @@ def conv_send(bot, event, conv_name, *args):
 @command.register(admin=True)
 def conv_leave(bot, event, conv_name='', *args):
     """Leave current (or specified) conversation
-       Usage: /bot conv_leave [conversation_name]"""
+       Usage: conv_leave [conversation_name]"""
     conv_name = strip_quotes(conv_name)
 
     convs = [event.conv] if not conv_name or conv_name == '.' else bot.find_conversations(conv_name)
@@ -153,7 +153,7 @@ def conv_leave(bot, event, conv_name='', *args):
 @command.register(admin=True)
 def conv_list(bot, event, conv_name='', *args):
     """List all conversations where bot is wreaking havoc
-       Usage: /bot conv_list [conversation_name]
+       Usage: conv_list [conversation_name]
        Legend: c ... commands, f ... forwarding, a ... autoreplies"""
     conv_name = strip_quotes(conv_name)
 

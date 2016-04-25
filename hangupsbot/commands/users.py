@@ -10,7 +10,7 @@ def user_to_text(user):
     text = ['[{}]({})'.format(user.full_name, link)]
     if user.emails:
         text.append(' ([{}](mailto:{}))'.format(user.emails[0], user.emails[0]))
-    text.append(' ... id:{}'.format(user.id_.chat_id))
+    text.append(' id:{}'.format(user.id_.chat_id))
     return ''.join(text)
 
 
@@ -18,7 +18,7 @@ def user_to_text(user):
 def user_list(bot, event, conv_name='', user_name='', *args):
     """List all participants in current (or specified) conversation
        You can also use . for current conversation. Includes G+ accounts and emails.
-       Usage: /bot user_list [conversation_name] [user_name]"""
+       Usage: user_list [conversation_name] [user_name]"""
     conv_name = strip_quotes(conv_name)
     user_name = strip_quotes(user_name)
     convs = [event.conv] if not conv_name or conv_name == '.' else bot.find_conversations(conv_name)
@@ -36,9 +36,23 @@ def user_list(bot, event, conv_name='', user_name='', *args):
 @command.register(admin=True)
 def user_find(bot, event, user_name='', *args):
     """Find users known to bot by their name
-       Usage: /bot user_find [user_name]"""
+       Usage: user_find [user_name]"""
     user_name = strip_quotes(user_name)
     text = [_('**Search results for user name "{}":**').format(user_name)]
     for u in bot.find_users(user_name):
         text.append(user_to_text(u))
     yield from event.conv.send_message(text_to_segments('\n'.join(text)))
+
+#@command.register(admin=True)
+def adminify(bot, event, user_name='', *args):
+    """Add user as admin by name or ID
+       Usage: adminify [user_name|ID]"""
+    username = strip_quotes(user_name)
+    matches = bot.find_users(user_name)
+    if matches > 1:
+        text = [_('**Multiple matches for name "{}":**').format(user_name)]
+        for match in matches:
+            text.append(user_to_text(match))
+        yield from event.conv.send_message(text_to_segments('\n'.join(text)))
+    else:
+        pass

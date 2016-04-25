@@ -15,7 +15,7 @@ def unknown_command(bot, event, *args):
 @command.register
 def help(bot, event, cmd=None, *args):
     """Help me, Obi-Wan Kenobi. You're my only hope.
-       Usage: /bot help [command]"""
+       Usage: help [command]"""
 
     cmd = cmd if cmd else 'help'
     try:
@@ -28,9 +28,15 @@ def help(bot, event, cmd=None, *args):
              '{}').format(cmd, _(command_fn.__doc__))
 
     if cmd == 'help':
+        # See if the user has admin privileges to limit commands displayed
+        admins_list = bot.get_config_suboption(event.conv_id, 'admins')
+        if event.user_id.chat_id not in admins_list:
+            command_list = command.get_user_commands(bot, event.conv_id)
+        else:
+            command_list = command.commands.keys()
         text += _('\n\n'
                   '**Supported commands:**\n'
-                  '{}').format(', '.join(sorted(command.commands.keys())))
+                  '{}').format(', '.join(sorted(command_list)))
 
     yield from event.conv.send_message(text_to_segments(text))
 
@@ -44,7 +50,7 @@ def ping(bot, event, *args):
 @command.register
 def echo(bot, event, *args):
     """Monkey see, monkey do!
-       Usage: /bot echo text"""
+       Usage: echo text"""
     yield from event.conv.send_message(text_to_segments(' '.join(args)))
 
 

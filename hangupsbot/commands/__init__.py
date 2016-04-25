@@ -1,10 +1,11 @@
-import os, glob, asyncio
+import os, glob, asyncio, traceback
 
 
 class CommandDispatcher:
     """Register commands and run them"""
     def __init__(self):
         self.commands = {}
+        self.commands_user = []
         self.commands_admin = []
         self.unknown_command = None
 
@@ -13,11 +14,19 @@ class CommandDispatcher:
         commands_admin = bot.get_config_suboption(conv_id, 'commands_admin') or []
         return list(set(commands_admin + self.commands_admin))
 
+    def get_user_commands(self, bot, conv_id):
+        """Get list of normal user commands"""
+        commands_admin = self.get_admin_commands(bot, conv_id)
+        commands_user = list(self.commands.keys())
+        for command in commands_admin:
+            commands_user.remove(command)
+        return commands_user
+
     @asyncio.coroutine
     def run(self, bot, event, *args, **kwds):
         """Run command"""
         try:
-            func = self.commands[args[0]]
+            func = self.commands[args[0].lower()]
         except KeyError:
             if self.unknown_command:
                 func = self.unknown_command
@@ -29,7 +38,9 @@ class CommandDispatcher:
         try:
             yield from func(bot, event, *args, **kwds)
         except Exception as e:
-            print(e)
+            print(_("Error executing command '{}'".format(func.__name__)))
+            traceback.print_exc()
+            print()
 
     def register(self, *args, admin=False):
         """Decorator for registering command"""
@@ -39,6 +50,8 @@ class CommandDispatcher:
             self.commands[func.__name__] = func
             if admin:
                 self.commands_admin.append(func.__name__)
+            else:
+                self.commands_user.append(func.__name__)
             return func
 
         # If there is one (and only one) positional argument and this argument is callable,

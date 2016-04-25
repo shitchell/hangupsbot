@@ -29,6 +29,7 @@ class Config(collections.MutableMapping):
             with open(self.filename, 'w') as f:
                 json.dump(self.config, f, indent=2, sort_keys=True)
                 self.changed = False
+                f.close()
 
     def get_by_path(self, keys_list):
         """Get item from config by path (list of keys)"""
@@ -37,6 +38,31 @@ class Config(collections.MutableMapping):
     def set_by_path(self, keys_list, value):
         """Set item in config by path (list of keys)"""
         self.get_by_path(keys_list[:-1])[keys_list[-1]] = value
+    
+    def append_by_path(self, keys_list, value):
+        """Append an item to a list in config by path"""
+        self.get_by_path(keys_list).append(value)
+
+    def set_by_paths(self, keys_list, value):
+        """Set item in config by path (list of keys),
+        creating any intermediary paths"""
+        cur_key = self.config
+        for key in keys_list[:-1]:
+            if not cur_key.get(key):
+                cur_key[key] = dict()
+            cur_key = cur_key[key]
+        cur_key[keys_list[-1]] = value
+        self.changed = True
+
+    def del_by_path(self, keys_list):
+        """Delete an item in config by path (list of keys)"""
+        cur_key = self.config
+        for key in keys_list[:-1]:
+            if not cur_key.get(key):
+                cur_key[key] = dict()
+            cur_key = cur_key[key]
+        del cur_key[keys_list[-1]]
+        self.changed = True
 
     def __getitem__(self, key):
         try:

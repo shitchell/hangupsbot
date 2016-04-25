@@ -18,7 +18,7 @@ class ConversationEvent:
         self.user_id = conv_event.user_id
         self.user = self.conv.get_user(self.user_id)
         self.timestamp = conv_event.timestamp
-        self.text = conv_event.text.strip() if isinstance(conv_event, hangups.ChatMessageEvent) else ''
+        self.text = conv_event.text.strip().replace('\xa0', ' ') if isinstance(conv_event, hangups.ChatMessageEvent) else ''
 
     def print_debug(self):
         """Print informations about conversation event"""
